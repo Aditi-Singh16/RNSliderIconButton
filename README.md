@@ -1,12 +1,12 @@
-RNSwipeVerify
+RNSliderIconButton
 =========
 
 A small componenent to Swipe Verify
 
 ## Installation
 
-  `npm install --save react-native-swipe-verify` or
-   `yarn add react-native-swipe-verify`
+  `npm install --save react-native-slider-icon-button` or
+   `yarn add react-native-slider-icon-button`
 
 ## Preview
 
@@ -17,7 +17,8 @@ A small componenent to Swipe Verify
 
 
 ## Important
-If the **RNSwipeVerify** is inside another component with PanResponder the  RNSwipeVerify will be cancelled.
+
+This is forked from https://github.com/darwin-morocho/RNSliderIconButton to make it compatible with low-end-devices and resolve the error arising up due to missing useNativeDriver.
 
 
 ## Usage
@@ -35,7 +36,7 @@ import {
 
 const { width } = Dimensions.get('window')
 
-import RNSwipeVerify from 'react-native-swipe-verify'
+import RNSliderIconButton from 'react-native-slider-icon-button'
 
 import LottieView from 'lottie-react-native';
 
@@ -61,7 +62,7 @@ export default class App extends Component {
 
         {/** Lottie example */}
         <View style={{ marginTop: 20 }}>
-          <RNSwipeVerify ref={ref => this.swipeVerify2 = ref}
+          <RNSliderIconButton ref={ref => this.swipeVerify2 = ref}
             width={width - 50}
             buttonSize={60}
             buttonColor="#2962FF"
@@ -88,7 +89,7 @@ export default class App extends Component {
 
             <Text>{isUploaded ? 'UPLOADED' : 'slide to upload'}</Text>
 
-          </RNSwipeVerify>
+          </RNSliderIconButton>
         </View>
         {/** end Lottie example */}
 
@@ -98,8 +99,12 @@ export default class App extends Component {
 
 
         <View style={{ marginTop: 20 }}>
-          <RNSwipeVerify ref={ref => this.swipeVerify3 = ref}
+          <RNSliderIconButton
             width={width - 50}
+            loading={false}
+            iconColor="#37474F"
+            disabled={false}
+            disabledColor="#D3D3D3"
             buttonSize={60}
             borderColor="#fff"
             buttonColor="#37474F"
@@ -114,7 +119,7 @@ export default class App extends Component {
 
             <Text>{isUnlocked ? 'UNLOCKED' : 'slide to unlock'}</Text>
 
-          </RNSwipeVerify>
+          </RNSliderIconButton>
         </View>
 
 
@@ -147,6 +152,12 @@ export default class App extends Component {
 | **borderColor** (optional) | string | #D50000 | border color |
 | **borderRadius** (optional) | number | 0 | border radius to the button and container |
 | **okButton** (optional) | object | { visible: true, duration: 300 } | if  visible is false the icon button will be hidden, duration (number) is the animation duration in miliseconds |
+| **loading** (optional) | boolean | {true} | if ActivityIndicator is shown or not |
+| **iconColor** (optional) | string | #D50000 | icon background color |
+| **disabled** (optional) | boolean | {true} | if disabled or not |
+| **disabledColor** (optional) | string | #D50000 | button and icon background color if disabled |
+
+
 
 
 

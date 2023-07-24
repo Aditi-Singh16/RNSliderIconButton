@@ -1,10 +1,10 @@
-/**
- * RNSwipeVerify
- */
+/** 
+ * RNSliderIconButton
+*/
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { View, PanResponder, Animated, UIManager } from "react-native";
+import { View, PanResponder, Animated, UIManager, ActivityIndicator } from "react-native";
 
 // Enable LayoutAnimation on Android
 if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -15,36 +15,37 @@ const propTypes = {
   buttonSize: PropTypes.number.isRequired,
   backgroundColor: PropTypes.string,
   buttonColor: PropTypes.string,
-  text: PropTypes.string,
   onVerified: PropTypes.func.isRequired,
-  textColor: PropTypes.string,
   borderColor: PropTypes.string,
   icon: PropTypes.node,
-  okIcon: PropTypes.any,
-  okButton: PropTypes.object,
-  borderRadius: PropTypes.number
+  iconColor: PropTypes.string,
+  borderRadius: PropTypes.number,
+  disabled: PropTypes.bool,
+  loading: PropTypes.bool,
+  disabledColor: PropTypes.string
 };
 
-//default props value
 const defaultProps = {
   backgroundColor: "#fff",
   buttonColor: "#D50000",
-  textColor: "#000",
   borderColor: "rgba(0,0,0,0)",
-  okButton: { visible: true, duration: 300 },
-  borderRadius: 0
+  disabled: false,
+  loading: false,
+  disabledColor: "#D3D3D3",
+  borderRadius: 0,
+  iconColor: "#D50000",
 };
 
-export default class RNSwipeVerify extends Component {
+export default class RNSliderIconButton extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      drag: new Animated.ValueXY(),
-      buttonOpacity: new Animated.Value(1),
+      drag: new Animated.ValueXY({x: 0, y: 0}),
       moving: false,
       verify: false,
       percent: 0,
+      disabled: this.props.disabled,
       position: { x: 0, y: 0 },
       dimensions: { width: 0, height: 0 }
     };
@@ -56,42 +57,40 @@ export default class RNSwipeVerify extends Component {
         this.state.drag.setOffset(positionXY);
         this.state.drag.setValue({ x: 0, y: 0 });
       },
-      onPanResponderMove: Animated.event([null, { dx: this.state.drag.x }], {
-        // limit sliding out of box
-        listener: (event, gestureState) => {
-          const { buttonSize } = this.props;
-
-          const {
-            drag,
-            verify,
-            dimensions: { width }
-          } = this.state;
-          const maxMoving = width - buttonSize;
-
-          var toX = gestureState.dx;
-
-          if (toX < 0) toX = 0;
-          if (toX > maxMoving) toX = maxMoving;
-          const percent = ((toX * 100) / maxMoving).toFixed();
-          this.setState({ percent });
-
-          if (verify) {
-            drag.setValue({ x: 0, y: 0 });
-            return;
-          }
-          drag.setValue({ x: toX, y: 0 });
+      onPanResponderMove: (e, gestureState) => {
+        if (this.props.disabled) return;
+        if (this.state.verify) {
+          this.state.drag.setValue({ x: 0, y: 0 });
+          return;
         }
-      }),
+    
+        const { buttonSize } = this.props;
+    
+        const {
+          drag,
+          dimensions: { width }
+        } = this.state;
+        const maxMoving = width - buttonSize;
+    
+        var toX = gestureState.dx;
+    
+        if (toX < 0) toX = 0;
+        if (toX > maxMoving) toX = maxMoving;
+        const percent = ((toX * 100) / maxMoving).toFixed();
+        this.setState({ percent });
+    
+        Animated.timing(this.state.drag, {
+          toValue: { x: toX, y: 0 },
+          duration: 0,
+          useNativeDriver: true
+        }).start();
+      },
       onPanResponderRelease: () => {
+        if (this.props.disabled) return;
         if (this.state.verify) return;
         if (this.state.percent >= 100) {
           this.setState({ moving: false, verify: true });
-          this.props.onVerified(); //communicate that the verification was successful
-
-          const { visible, duration } = this.props.okButton;
-          if (!visible) {
-            this.toggleShowAnimation(false, duration);
-          }
+          this.props.onVerified();
         } else if (!this.state.verify) {
           this.reset();
         }
@@ -99,44 +98,76 @@ export default class RNSwipeVerify extends Component {
       onPanResponderTerminate: () => {
         // Another component has become the responder, so this gesture
         // should be cancelled
-        // console.log("onPanResponderTerminate", gestureState);
       }
-    });
+    });   
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.disabled !== this.props.disabled && this.props.disabled === true) {
+      this.reset();
+    }
   }
 
   reset() {
     this.state.drag.setOffset({ x: 0, y: 0 });
     Animated.timing(this.state.drag, {
       toValue: { x: 0, y: 0 },
-      duration: 300
+      duration: 300,
+      useNativeDriver: true
     }).start();
-    this.toggleShowAnimation(true, this.props.okButton.duration);
     this.setState({ moving: false, verify: false, percent: 0 });
-  }
-
-  toggleShowAnimation(visible, duration) {
-    Animated.timing(
-      // Animate over time
-      this.state.buttonOpacity, // The animated value to drive
-      {
-        toValue: visible ? 1 : 0, // Animate to opacity: 1 (opaque)
-        duration: duration // Make it take a while
-      }
-    ).start();
   }
 
   render() {
     const {
       buttonColor,
+      disabledColor,
       buttonSize,
       borderColor,
       backgroundColor,
+      iconColor,
       icon,
-      borderRadius
+      borderRadius,
+      disabled,
+      loading
     } = this.props;
-    const { buttonOpacity } = this.state;
 
     const position = { transform: this.state.drag.getTranslateTransform() };
+    const buttonBackgroundColor = disabled ? disabledColor : buttonColor;
+    const iconBackgroundColor = disabled ? disabledColor : iconColor;
+
+    if(loading){
+      return (
+        <View
+          style={{
+            borderColor: borderColor,
+            borderWidth: 2,
+            borderRadius: borderRadius + 4,
+            padding: 2,
+            flex: 1,
+            height: buttonSize+4
+          }}
+        >
+          <View
+            onLayout={event => {
+              var { x, y, width, height } = event.nativeEvent.layout;
+              this.setState({
+                dimensions: { width, height },
+                position: { x, y }
+              });
+            }}
+            style={{
+              backgroundColor: buttonBackgroundColor,
+              height: buttonSize,
+              borderRadius,
+              justifyContent: "center"
+            }}
+          >
+            <ActivityIndicator />
+          </View>
+        </View>
+      );
+    }
 
     return (
       <View
@@ -158,7 +189,7 @@ export default class RNSwipeVerify extends Component {
             });
           }}
           style={{
-            backgroundColor,
+            backgroundColor: buttonBackgroundColor,
             height: buttonSize,
             borderRadius,
             justifyContent: "center"
@@ -183,10 +214,9 @@ export default class RNSwipeVerify extends Component {
                 width: buttonSize,
                 height: buttonSize,
                 borderRadius: borderRadius,
-                backgroundColor: buttonColor,
+                backgroundColor: iconBackgroundColor,
                 justifyContent: "center",
                 alignItems: "center",
-                opacity: buttonOpacity
               }
             ]}
           >
@@ -198,5 +228,5 @@ export default class RNSwipeVerify extends Component {
   }
 }
 
-RNSwipeVerify.propTypes = propTypes;
-RNSwipeVerify.defaultProps = defaultProps;
+RNSliderIconButton.propTypes = propTypes;
+RNSliderIconButton.defaultProps = defaultProps;

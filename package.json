@@ -1,20 +1,21 @@
 {
-  "name": "react-native-swipe-verify",
+  "name": "react-native-slider-icon-button",
   "version": "0.1.6",
   "license": "MIT",
   "author": {
-    "name": "Darwin Morocho",
-    "email": "dsmr.apps@gmail.com",
-    "url": "https://dina.ec"
+    "name": "Aditi Singh",
+    "email": "aditiansingh@gmail.com"
   },
   "keywords": [
     "react-native-swipe-verify",
     "react-native-confirm",
     "react-native-verify",
     "react-native-slide-confirm",
-    "react-native-slide-verify"
+    "react-native-slide-verify",
+    "slider-button",
+    "low-end-device-compatible"
   ],
-  "homepage": "https://github.com/MorochoRochaDarwin/RNSwipeVerify",
+  "homepage": "https://github.com/Aditi-Singh16/RNSliderIconButton",
   "private": false,
   "main": "src/index.js",
   "scripts": {},
