@@ -13,7 +13,6 @@ if (UIManager.setLayoutAnimationEnabledExperimental) {
 
 const propTypes = {
   buttonSize: PropTypes.number.isRequired,
-  backgroundColor: PropTypes.string,
   buttonColor: PropTypes.string,
   onVerified: PropTypes.func.isRequired,
   borderColor: PropTypes.string,
@@ -21,17 +20,14 @@ const propTypes = {
   iconColor: PropTypes.string,
   borderRadius: PropTypes.number,
   disabled: PropTypes.bool,
-  loading: PropTypes.bool,
-  disabledColor: PropTypes.string
+  loading: PropTypes.bool
 };
 
 const defaultProps = {
-  backgroundColor: "#fff",
   buttonColor: "#D50000",
   borderColor: "rgba(0,0,0,0)",
   disabled: false,
   loading: false,
-  disabledColor: "#D3D3D3",
   borderRadius: 0,
   iconColor: "#D50000",
 };
@@ -121,10 +117,8 @@ export default class RNSliderIconButton extends Component {
   render() {
     const {
       buttonColor,
-      disabledColor,
       buttonSize,
       borderColor,
-      backgroundColor,
       iconColor,
       icon,
       borderRadius,
@@ -133,8 +127,6 @@ export default class RNSliderIconButton extends Component {
     } = this.props;
 
     const position = { transform: this.state.drag.getTranslateTransform() };
-    const buttonBackgroundColor = disabled ? disabledColor : buttonColor;
-    const iconBackgroundColor = disabled ? disabledColor : iconColor;
 
     if(loading){
       return (
@@ -157,7 +149,7 @@ export default class RNSliderIconButton extends Component {
               });
             }}
             style={{
-              backgroundColor: buttonBackgroundColor,
+              backgroundColor: buttonColor,
               height: buttonSize,
               borderRadius,
               justifyContent: "center"
@@ -189,7 +181,8 @@ export default class RNSliderIconButton extends Component {
             });
           }}
           style={{
-            backgroundColor: buttonBackgroundColor,
+            backgroundColor: buttonColor,
+            opacity: disabled ? 0.5 : 1,
             height: buttonSize,
             borderRadius,
             justifyContent: "center"
@@ -214,7 +207,8 @@ export default class RNSliderIconButton extends Component {
                 width: buttonSize,
                 height: buttonSize,
                 borderRadius: borderRadius,
-                backgroundColor: iconBackgroundColor,
+                backgroundColor: iconColor,
+                opacity: disabled ? 0.5 : 1,
                 justifyContent: "center",
                 alignItems: "center",
               }
