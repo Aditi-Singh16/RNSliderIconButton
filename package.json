@@ -17,7 +17,7 @@
   ],
   "homepage": "https://github.com/Aditi-Singh16/RNSliderIconButton",
   "private": false,
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "types": "index.d.ts",
   "scripts": {},
   "dependencies": {
