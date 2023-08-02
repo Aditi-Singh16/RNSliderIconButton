@@ -6,6 +6,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { View, PanResponder, Animated, UIManager, ActivityIndicator } from "react-native";
 
+
 // Enable LayoutAnimation on Android
 if (UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -13,19 +14,27 @@ if (UIManager.setLayoutAnimationEnabledExperimental) {
 
 const propTypes = {
   buttonSize: PropTypes.number.isRequired,
-  buttonColor: PropTypes.string,
+  buttonColor: PropTypes.shape({
+    r: PropTypes.number.isRequired,
+    g: PropTypes.number.isRequired,
+    b: PropTypes.number.isRequired,
+  }),
+  textStyle: PropTypes.object,
   onVerified: PropTypes.func.isRequired,
   borderColor: PropTypes.string,
   icon: PropTypes.node,
   iconColor: PropTypes.string,
   borderRadius: PropTypes.number,
   disabled: PropTypes.bool,
-  loading: PropTypes.bool
+  loading: PropTypes.bool,
+  loadingBackGround: PropTypes.string
 };
 
 const defaultProps = {
-  buttonColor: "#D50000",
+  buttonColor: { r: 254, g: 153, b: 13 },
+  textStyle: {},
   borderColor: "rgba(0,0,0,0)",
+  loadingBackGround: "rgba(0,0,0,0)",
   disabled: false,
   loading: false,
   borderRadius: 0,
@@ -43,6 +52,13 @@ export default class RNSliderIconButton extends Component {
       percent: 0,
       disabled: this.props.disabled,
       position: { x: 0, y: 0 },
+      animatedColorValue: {
+        r: new Animated.Value(254),
+        g: new Animated.Value(153),
+        b: new Animated.Value(13),
+        a: new Animated.Value(0.5),
+      },
+      gradientOpacity: new Animated.Value(0),
       dimensions: { width: 0, height: 0 }
     };
 
@@ -74,7 +90,9 @@ export default class RNSliderIconButton extends Component {
         if (toX > maxMoving) toX = maxMoving;
         const percent = ((toX * 100) / maxMoving).toFixed();
         this.setState({ percent });
-    
+
+
+        
         Animated.timing(this.state.drag, {
           toValue: { x: toX, y: 0 },
           duration: 0,
@@ -116,17 +134,22 @@ export default class RNSliderIconButton extends Component {
 
   render() {
     const {
-      buttonColor,
+      loadingBackGround,
       buttonSize,
       borderColor,
       iconColor,
       icon,
       borderRadius,
-      disabled,
       loading
     } = this.props;
 
     const position = { transform: this.state.drag.getTranslateTransform() };
+    
+
+const leftColor = 'rgba(253,154,13,1)'
+    const rightColor = 'rgba(253,154,13,0.5)';
+
+
 
     if(loading){
       return (
@@ -149,13 +172,13 @@ export default class RNSliderIconButton extends Component {
               });
             }}
             style={{
-              backgroundColor: buttonColor,
+              backgroundColor: loadingBackGround,
               height: buttonSize,
               borderRadius,
               justifyContent: "center"
             }}
           >
-            <ActivityIndicator />
+            <ActivityIndicator color="white"/>
           </View>
         </View>
       );
@@ -163,61 +186,78 @@ export default class RNSliderIconButton extends Component {
 
     return (
       <View
-        style={{
-          borderColor: borderColor,
-          borderWidth: 2,
-          borderRadius: borderRadius + 4,
-          padding: 2,
-          flex: 1,
-          height: buttonSize+4
-        }}
+      style={{
+        borderRadius:borderRadius,
+        height: buttonSize,
+        backgroundColor: rightColor, // set background color to rightColor
+          overflow: 'hidden' 
+
+      }}
       >
+        <Animated.View
+        style={{
+          position: 'absolute',
+          left: 0,
+          height: '100%',
+          width: '100%',
+          transform: [
+            {
+              translateX: this.state.dimensions.width > buttonSize 
+              ? this.state.drag.x.interpolate({
+                inputRange: [0, this.state.dimensions.width - buttonSize],
+                outputRange: [-this.state.dimensions.width + buttonSize, 1],
+                extrapolate: 'clamp'
+              }):0,
+            },
+          ],
+          backgroundColor: leftColor, // Directly setting left color here
+          borderRadius:borderRadius
+        }}
+      />
+    <Animated.View
+      onLayout={event => {
+        var { x, y, width, height } = event.nativeEvent.layout;
+        this.setState({
+          dimensions: { width, height },
+          position: { x, y }
+        });
+      }}
+      style={[
+        {
+          justifyContent: "center",
+        },
+      ]}
+    >
+      {this.props.children && (
         <View
-          onLayout={event => {
-            var { x, y, width, height } = event.nativeEvent.layout;
-            this.setState({
-              dimensions: { width, height },
-              position: { x, y }
-            });
-          }}
           style={{
-            backgroundColor: buttonColor,
-            opacity: disabled ? 0.5 : 1,
-            height: buttonSize,
-            borderRadius,
-            justifyContent: "center"
+            position: "absolute",
+            alignSelf: "center"
           }}
         >
-          {this.props.children && (
-            <View
-              style={{
-                position: "absolute",
-                alignSelf: "center"
-              }}
-            >
-              {this.props.children}
-            </View>
-          )}
-
-          <Animated.View
-            {...this._panResponder.panHandlers}
-            style={[
-              position,
-              {
-                width: buttonSize,
-                height: buttonSize,
-                borderRadius: borderRadius,
-                backgroundColor: iconColor,
-                opacity: disabled ? 0.5 : 1,
-                justifyContent: "center",
-                alignItems: "center",
-              }
-            ]}
-          >
-            {icon}
-          </Animated.View>
+              {React.cloneElement(this.props.children, { style: { ...this.props.textStyle} })}
         </View>
-      </View>
+      )}
+
+
+        <Animated.View
+        {...this._panResponder.panHandlers}
+        style={[
+          position,
+          {
+            width: buttonSize,
+            height: buttonSize,
+            borderRadius: borderRadius,
+            backgroundColor: iconColor,
+            justifyContent: "center",
+            alignItems: "center",
+          }
+        ]}
+      >
+        {icon}
+        </Animated.View>
+    </Animated.View>
+    </View>
     );
   }
 }
