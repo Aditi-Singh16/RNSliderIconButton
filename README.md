@@ -1,27 +1,13 @@
 RNSliderIconButton
 =========
 
-A small componenent to Swipe Verify
+A component to swipe and verify which is compatible with low-end mobiles.
 
 ## Installation
 
   `npm install --save react-native-slider-icon-button` or
    `yarn add react-native-slider-icon-button`
 
-## Preview
-
-| | |
-| --- | --- |
-| <img width="259" alt="lo" src="https://user-images.githubusercontent.com/15864336/48955616-ba636900-ef1c-11e8-915b-5fa53939ffb3.png"> | <img width="259" alt="lo" src="https://user-images.githubusercontent.com/15864336/49022236-5a5e0400-f162-11e8-9c71-50f21cd999e1.png"> |
-
-
-
-## Important
-
-This is forked from https://github.com/darwin-morocho/RNSliderIconButton to make it compatible with low-end-devices and resolve the error arising up due to missing useNativeDriver.
-
-
-## Usage
 
 
 ```JSX
@@ -104,13 +90,10 @@ export default class App extends Component {
             loading={false}
             iconColor="#37474F"
             disabled={false}
-            disabledColor="#D3D3D3"
             buttonSize={60}
-            borderColor="#fff"
-            buttonColor="#37474F"
-            backgroundColor="#ececec"
-            textColor="#37474F"
-            okButton={{ visible: false, duration: 400 }}
+            initialColor="#37474F"
+            finalColor="#D50000"
+            textStyle={}
             onVerified={() => {
               this.setState({ isUnlocked: true })
             }}
@@ -146,16 +129,15 @@ export default class App extends Component {
 | --- | --- | --- | --- |
 | **width** (required) | number | required | the width of swipe-verify |
 | **buttonSize** (required) | number | required | the button (Icon) size of swipe-verify |
-| **backgroundColor** (optional) | string | #F50057 | background color |
-| **buttonColor** (optional) | string | #D50000 | button background color |
+| **initialColor** (optional) | string | #D50000 | button background color towards the right |
+| **finalColor** (optional) | string | #D50000 | button background color towards the left |
+| **textStyle** (optional) | object | {} | text style for the text on the slider button |
 | **icon** (optional) | component |  | see the example to more information |
 | **borderColor** (optional) | string | #D50000 | border color |
 | **borderRadius** (optional) | number | 0 | border radius to the button and container |
-| **okButton** (optional) | object | { visible: true, duration: 300 } | if  visible is false the icon button will be hidden, duration (number) is the animation duration in miliseconds |
 | **loading** (optional) | boolean | {true} | if ActivityIndicator is shown or not |
 | **iconColor** (optional) | string | #D50000 | icon background color |
 | **disabled** (optional) | boolean | {true} | if disabled or not |
-| **disabledColor** (optional) | string | #D50000 | button and icon background color if disabled |
 
 
 

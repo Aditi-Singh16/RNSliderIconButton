@@ -14,24 +14,20 @@ if (UIManager.setLayoutAnimationEnabledExperimental) {
 
 const propTypes = {
   buttonSize: PropTypes.number.isRequired,
-  buttonColor: PropTypes.shape({
-    r: PropTypes.number.isRequired,
-    g: PropTypes.number.isRequired,
-    b: PropTypes.number.isRequired,
-  }),
+  initialColor: PropTypes.string,
+  finalColor: PropTypes.string,
   textStyle: PropTypes.object,
   onVerified: PropTypes.func.isRequired,
-  borderColor: PropTypes.string,
   icon: PropTypes.node,
   iconColor: PropTypes.string,
   borderRadius: PropTypes.number,
   disabled: PropTypes.bool,
   loading: PropTypes.bool,
-  loadingBackGround: PropTypes.string
 };
 
 const defaultProps = {
-  buttonColor: { r: 254, g: 153, b: 13 },
+  initialColor: 'rgba(253,154,13,1)',
+  finalColor: 'rgba(253,154,13,0.5)',
   textStyle: {},
   borderColor: "rgba(0,0,0,0)",
   loadingBackGround: "rgba(0,0,0,0)",
@@ -52,13 +48,6 @@ export default class RNSliderIconButton extends Component {
       percent: 0,
       disabled: this.props.disabled,
       position: { x: 0, y: 0 },
-      animatedColorValue: {
-        r: new Animated.Value(254),
-        g: new Animated.Value(153),
-        b: new Animated.Value(13),
-        a: new Animated.Value(0.5),
-      },
-      gradientOpacity: new Animated.Value(0),
       dimensions: { width: 0, height: 0 }
     };
 
@@ -134,7 +123,6 @@ export default class RNSliderIconButton extends Component {
 
   render() {
     const {
-      loadingBackGround,
       buttonSize,
       borderColor,
       iconColor,
@@ -144,12 +132,6 @@ export default class RNSliderIconButton extends Component {
     } = this.props;
 
     const position = { transform: this.state.drag.getTranslateTransform() };
-    
-
-const leftColor = 'rgba(253,154,13,1)'
-    const rightColor = 'rgba(253,154,13,0.5)';
-
-
 
     if(loading){
       return (
@@ -172,7 +154,7 @@ const leftColor = 'rgba(253,154,13,1)'
               });
             }}
             style={{
-              backgroundColor: loadingBackGround,
+              backgroundColor: finalColor,
               height: buttonSize,
               borderRadius,
               justifyContent: "center"
@@ -189,9 +171,8 @@ const leftColor = 'rgba(253,154,13,1)'
       style={{
         borderRadius:borderRadius,
         height: buttonSize,
-        backgroundColor: rightColor, // set background color to rightColor
+        backgroundColor: initialColor,
           overflow: 'hidden' 
-
       }}
       >
         <Animated.View
@@ -210,7 +191,7 @@ const leftColor = 'rgba(253,154,13,1)'
               }):0,
             },
           ],
-          backgroundColor: leftColor, // Directly setting left color here
+          backgroundColor: finalColor,
           borderRadius:borderRadius
         }}
       />
@@ -235,7 +216,7 @@ const leftColor = 'rgba(253,154,13,1)'
             alignSelf: "center"
           }}
         >
-              {React.cloneElement(this.props.children, { style: { ...this.props.textStyle} })}
+          {React.cloneElement(this.props.children, { style: { ...this.props.textStyle} })}
         </View>
       )}
 

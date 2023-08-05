@@ -1,33 +1,34 @@
-declare module 'react-native-slider-icon-button' {
-    import { Component, ReactNode } from 'react';
-    import { Animated } from 'react-native';
+// index.d.ts
 
-    interface RNSliderIconButtonProps {
-        buttonSize: number;
-        buttonColor?: string;
-        onVerified: () => void;
-        borderColor?: string;
-        icon?: ReactNode;
-        iconColor?: string;
-        borderRadius?: number;
-        disabled?: boolean;
-        loading?: boolean;
-        children?: ReactNode;
-    }
+import React, { ReactNode, Component } from "react";
+import { Animated, ViewStyle } from "react-native";
 
-    interface RNSliderIconButtonState {
-        drag: Animated.ValueXY;
-        moving: boolean;
-        verify: boolean;
-        percent: number;
-        disabled: boolean;
-        position: { x: number; y: number };
-        dimensions: { width: number; height: number };
-    }
-
-    export default class RNSliderIconButton extends Component<RNSliderIconButtonProps, RNSliderIconButtonState> {
-        constructor(props: RNSliderIconButtonProps);
-        reset(): void;
-    }
+export interface RNSliderIconButtonProps {
+  buttonSize: number;
+  initialColor?: string;
+  finalColor?: string;
+  textStyle?: object;
+  onVerified: () => void;
+  icon?: ReactNode;
+  iconColor?: string;
+  borderRadius?: number;
+  disabled?: boolean;
+  loading?: boolean;
 }
-      
+
+export interface RNSliderIconButtonState {
+  drag: Animated.ValueXY;
+  moving: boolean;
+  verify: boolean;
+  percent: number;
+  disabled: boolean;
+  position: { x: number; y: number };
+  dimensions: { width: number; height: number };
+}
+
+declare class RNSliderIconButton extends Component<RNSliderIconButtonProps, RNSliderIconButtonState> {
+  constructor(props: RNSliderIconButtonProps);
+  render(): JSX.Element;
+}
+
+export default RNSliderIconButton;
