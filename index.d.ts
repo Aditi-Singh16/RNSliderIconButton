@@ -4,6 +4,7 @@ import React, { ReactNode, Component } from "react";
 import { Animated, ViewStyle } from "react-native";
 
 export interface RNSliderIconButtonProps {
+  children?: ReactNode;
   buttonSize: number;
   initialColor?: string;
   finalColor?: string;
