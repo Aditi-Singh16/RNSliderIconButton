@@ -35,6 +35,7 @@ const defaultProps = {
   loading: false,
   borderRadius: 0,
   iconColor: "#D50000",
+  buttonSize: 60
 };
 
 export default class RNSliderIconButton extends Component {
